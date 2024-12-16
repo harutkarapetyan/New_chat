@@ -1,5 +1,8 @@
+import requests
+
 from fastapi import APIRouter, HTTPException, status, Depends, Form, Query
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from pydantic.v1 import BaseModel
 from sqlalchemy.orm import Session
 from models.models import User  # Assuming the SQLAlchemy User model is in the models.py file
 from core import security
@@ -7,6 +10,8 @@ import re
 from core.confirm_registration import mail_verification_email
 from schemas.schemas import UserAdd, UserLogin
 from database import get_db
+from starlette.responses import RedirectResponse
+from pydantic import BaseModel
 
 auth_router = APIRouter(tags=["auth"], prefix="/api/auth")
 
@@ -39,34 +44,42 @@ def verify_email(email: str, db: Session = Depends(get_db)):
                         headers=headers)
 
 
+class  UserSignUp(BaseModel):
+    first_name: str
+    last_name: str
+    email: str
+    password: str
+    confirm_password: str
+    phone_number: str
+
+
 @auth_router.post("/add-user")
-def add_user(first_name: str = Form(...), last_name: str = Form(...), email: str = Form(...),
-             password: str = Form(...), confirm_password: str = Form(...), phone_number: str = Form(...),
+def add_user(user_signup_data: UserSignUp,
              db: Session = Depends(get_db)):
 
-    if password != confirm_password:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail="Incorrect password")
+    # if user_signup_data.password != user_signup_data.confirm_password:
+    #     raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+    #                         detail="Incorrect password")
+    #
+    # if not is_valid_password(user_signup_data.password):
+    #     raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+    #                     detail="Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character")
 
-    if not is_valid_password(password):
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail="Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-
-    user_hashed_password = security.hash_password(password)
+    user_hashed_password = security.hash_password(user_signup_data.password)
 
 
-    if db.query(User).filter(User.email == email).first():
+    if db.query(User).filter(User.email == user_signup_data.email).first():
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Email already exists")
 
     # Insert user into database
     new_user = User(
-        first_name=first_name,
-        last_name = last_name,
-        email=email,
+        first_name=user_signup_data.first_name,
+        last_name =user_signup_data. last_name,
+        email=user_signup_data.email,
         password=user_hashed_password,
-        phone_number=phone_number,
+        phone_number=user_signup_data.phone_number,
     )
 
     db.add(new_user)
@@ -74,10 +87,11 @@ def add_user(first_name: str = Form(...), last_name: str = Form(...), email: str
     db.refresh(new_user)
 
     # Send verification email
-    mail_verification_email(email)
+    mail_verification_email(user_signup_data.email)
 
-    return JSONResponse(status_code=status.HTTP_201_CREATED,
-                        content={"message": "You have successfully registered"})
+    # return FileResponse("C:\\Users\\Dell\\PycharmProjects\\Chat_project\\app\\templates\\auth.html")
+    return "OK"
+
 
 
 @auth_router.get("/get-one-user-by-id/{user_id}")
