@@ -1,6 +1,6 @@
 const token = localStorage.getItem("token");
 
-const ws = new WebSocket(`ws://localhost:8001/api/chat/global/chat?token=${token}`);
+const ws = new WebSocket(`ws://localhost:8002/api/chat/global/chat?token=${token}`);
 
 
 ws.onclose = () => {

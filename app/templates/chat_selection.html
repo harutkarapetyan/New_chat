@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Selection</title>
+  <link rel="stylesheet" href="/static/css/chat_selection.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome to the Chat Selection</h2>
+    <div class="chat-option">
+      <button class="chat-btn" id="globalChatBtn">Global Chat</button>
+    </div>
+    <div class="chat-option">
+      <button class="chat-btn" id="oneToOneChatBtn">One to One Chat</button>
+    </div>
+    <div id="userList" class="user-list" style="display:none;">
+      <h3>Select a User for One to One Chat</h3>
+      <ul id="users">
+        <!-- User list will be dynamically inserted here -->
+      </ul>
+    </div>
+  </div>
+
+  <script src="../static/js/chat_selection.js"></script>
+</body>
+</html>

@@ -68,6 +68,10 @@ def get_signin_page(request: Request):
 def get_home_page(request: Request):
     return template.TemplateResponse("index.html", {"request": request})
 
+@app.get("/selection-page")
+def get_selection_page(request: Request):
+    return template.TemplateResponse("chat_selection.html", {"request": request})
+
 
 app.include_router(auth_router)
 app.include_router(forgot_router)
