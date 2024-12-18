@@ -1,12 +1,6 @@
-//const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMiwiZXhwIjoxNzM2ODc3NjU0fQ.KFykHDQs1JxjPY8t8pGfieJ4NkhgsdEWbMyJUY0w_J8"
-//
-//
-//const ws = new WebSocket('ws://localhost:8001/api/chat/ws/chat?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMiwiZXhwIjoxNzM2ODc3NjU0fQ.KFykHDQs1JxjPY8t8pGfieJ4NkhgsdEWbMyJUY0w_J8');
-
-//const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyMiwiZXhwIjoxNzM2ODc3NjU0fQ.KFykHDQs1JxjPY8t8pGfieJ4NkhgsdEWbMyJUY0w_J8"
 const token = localStorage.getItem("token");
 
-const ws = new WebSocket(`ws://localhost:8001/api/chat/ws/chat?token=${token}`);
+const ws = new WebSocket(`ws://localhost:8001/api/chat/global/chat?token=${token}`);
 
 
 ws.onclose = () => {

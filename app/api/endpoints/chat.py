@@ -1,25 +1,13 @@
 from fastapi import  WebSocket, HTTPException, status, APIRouter
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
-from models.models import User
+from models.models import User, MessageGlobal
 from database import get_db
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
+from fastapi import WebSocket, WebSocketDisconnect, Request
 from core import security
 
-# from app.core.security import get_current_user
-
-# from fastapi.templating import Jinja2Templates
-# from fastapi.staticfiles import StaticFiles
-#
-#
-# template = Jinja2Templates(directory="templates")
-
 chat_router = APIRouter(tags=["chat"], prefix="/api/chat")
-
-# app = FastAPI()
-
-# app.mount("/static", StaticFiles(directory="static"), name='static')
 
 
 # Manage connected WebSocket clients
@@ -41,11 +29,8 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-
-@chat_router.websocket("/ws/chat")
-async def chat_websocket(websocket: WebSocket, db: Session = Depends(get_db),
-                         token = str):
-
+@chat_router.websocket("/global/chat")
+async def global_chat_websocket(websocket: WebSocket, db: Session = Depends(get_db), token = str):
     await manager.connect(websocket)
 
     try:
@@ -53,7 +38,25 @@ async def chat_websocket(websocket: WebSocket, db: Session = Depends(get_db),
 
         while True:
             data = await websocket.receive_text()
-            await manager.broadcast(f"{user.first_name} {user.last_name} ->: {data}")
+
+            message = MessageGlobal(
+                sender_id=user.user_id,
+                content=data,
+            )
+            try:
+                db.add(message)
+                db.commit()
+                db.refresh(message)
+            except Exception as e:
+                db.rollback()
+                await websocket.send_text("❌ Error: Message not saved to database.")
+                print(f"Error saving message: {e}")
+                continue
+
+            timestamp = message.timestamp.strftime('%d %b %H:%M')
+
+
+            await manager.broadcast(f"{user.first_name} {user.last_name} {timestamp} -> {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast("A user disconnected.")

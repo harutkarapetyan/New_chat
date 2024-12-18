@@ -27,12 +27,11 @@ class ResetPassword(Base):
     code = Column(Integer, nullable=False, unique=True)
 
 
-class Message(Base):
-    __tablename__ = "message"
+class MessageGlobal(Base):
+    __tablename__ = "global_message"
 
     message_id = Column(Integer, nullable=False, primary_key=True)
     sender_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
-    receiver_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)  # Group chats might not need receiver
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     is_read = Column(Boolean, default=False)
@@ -40,7 +39,9 @@ class Message(Base):
 
     # Relationships
     sender = relationship("User", foreign_keys=[sender_id])
-    receiver = relationship("User", foreign_keys=[receiver_id])
+
+    # receiver_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)  # Group chats might not need receiver
+    # receiver = relationship("User", foreign_keys=[receiver_id])
     # parent_message = relationship("Message", remote_side=[message_id])
 
 
