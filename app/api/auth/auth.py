@@ -1,17 +1,12 @@
-import requests
-
-from fastapi import APIRouter, HTTPException, status, Depends, Form, Query
-from fastapi.responses import JSONResponse, FileResponse
-from pydantic.v1 import BaseModel
+from fastapi import APIRouter, HTTPException, status, Depends, Form
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from models.models import User  # Assuming the SQLAlchemy User model is in the models.py file
+from models.models import User
 from core import security
 import re
 from core.confirm_registration import mail_verification_email
-from schemas.schemas import UserAdd, UserLogin
+from schemas.schemas import UserLogin, UserSignUp
 from database import get_db
-from starlette.responses import RedirectResponse
-from pydantic import BaseModel
 
 auth_router = APIRouter(tags=["auth"], prefix="/api/auth")
 
@@ -44,23 +39,16 @@ def verify_email(email: str, db: Session = Depends(get_db)):
                         headers=headers)
 
 
-class  UserSignUp(BaseModel):
-    first_name: str
-    last_name: str
-    email: str
-    password: str
-    confirm_password: str
-    phone_number: str
 
 
 @auth_router.post("/add-user")
 def add_user(user_signup_data: UserSignUp,
              db: Session = Depends(get_db)):
 
-    # if user_signup_data.password != user_signup_data.confirm_password:
-    #     raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-    #                         detail="Incorrect password")
-    #
+    if user_signup_data.password != user_signup_data.confirm_password:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="Incorrect password")
+
     # if not is_valid_password(user_signup_data.password):
     #     raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
     #                     detail="Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character")
@@ -89,7 +77,8 @@ def add_user(user_signup_data: UserSignUp,
     # Send verification email
     mail_verification_email(user_signup_data.email)
 
-    return "OK"
+    return JSONResponse(status_code=status.HTTP_201_CREATED,
+                        content={"message": "You have successfully registered"})
 
 
 
@@ -212,51 +201,9 @@ def login(login_data: UserLogin, db: Session = Depends(get_db)):
                         },
                         headers=headers)
 
-#
-# @auth_router.get("/get_all_users")
-# def get_all_users(page: int = Query(default=1, ge=1), db: Session = Depends(get_db)):
-#     per_page = 20
-#
-#     count = db.query(User).count()
-#
-#     if count == 0:
-#         return JSONResponse(status_code=status.HTTP_200_OK, content=[], headers=headers)
-#
-#     max_page = (count - 1) // per_page + 1
-#
-#     if page > max_page:
-#         page = max_page
-#
-#     offset = (page - 1) * per_page
-#
-#     users = db.query(User.user_id, User.first_name, User.last_name, User.email, User.phone_number, User.status) \
-#               .limit(per_page) \
-#               .offset(offset) \
-#               .all()
-#
-#     users_list = [
-#         {
-#             "user_id": user.user_id,
-#             "first_name": user.first_name,
-#             "last_name": user.last_name,
-#             "email": user.email,
-#             "phone_number": user.phone_number,
-#             "status": user.status,
-#         }
-#         for user in users
-#     ]
-#
-#     return JSONResponse(status_code=status.HTTP_200_OK,
-#                         content={
-#                             "users": users_list,
-#                             "page": page,
-#                             "total_pages": max_page,
-#                             "total_users": count
-#                         },
-#                         headers=headers)
 
 
 @auth_router.get("/users")
 def get_users(db: Session = Depends(get_db)):
     users = db.query(User).all()  # Get all users from the database
-    return [{"first_name": user.first_name, "last_name": user.last_name} for user in users]
+    return [{"user_id":user.user_id,"first_name": user.first_name, "last_name": user.last_name} for user in users]

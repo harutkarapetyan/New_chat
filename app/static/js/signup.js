@@ -22,7 +22,7 @@ submitButton.addEventListener("click", function (e) {
   };
 
 
-  fetch("http://127.0.0.1:8002/api/auth/add-user", {
+  fetch("http://127.0.0.1:8001/api/auth/add-user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,6 +30,6 @@ submitButton.addEventListener("click", function (e) {
     },
     body: JSON.stringify(userData) // Send the form data as JSON
   })
-  .then (window.location.href = "http://127.0.0.1:8002/signin-page")
+  .then (window.location.href = "http://127.0.0.1:8001/signin-page")
 });
 

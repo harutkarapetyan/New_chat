@@ -5,7 +5,7 @@ const usersListElement = document.getElementById("users");
 
 globalChatBtn.addEventListener("click", function () {
 //  window.location.href = "/global/chat"; // Global Chat page URL
-    window.location.href = "http://127.0.0.1:8002/home-page";
+    window.location.href = "http://127.0.0.1:8001/home-page";
 });
 
 oneToOneChatBtn.addEventListener("click", function () {
@@ -15,7 +15,7 @@ oneToOneChatBtn.addEventListener("click", function () {
 
 // Function to fetch users for one-to-one chat
 function fetchUsers() {
-  fetch("http://127.0.0.1:8002/api/users") // API endpoint to get list of users
+  fetch("http://127.0.0.1:8001/api/auth/users") // API endpoint to get list of users
     .then(response => response.json())
     .then(data => {
       usersListElement.innerHTML = ""; // Clear the existing list

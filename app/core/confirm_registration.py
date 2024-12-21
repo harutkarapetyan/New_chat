@@ -3,7 +3,7 @@ from services.service_email import send_email
 
 def mail_body(email):
 
-    URL = f"http://127.0.0.1:8002/api/auth/mail_verification"
+    URL = f"http://127.0.0.1:8001/api/auth/mail_verification"
 
     return f"""Dear user,
             Thank you for creating your account.

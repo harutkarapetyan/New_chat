@@ -10,7 +10,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:8002/api/auth/login', {
+        const response = await fetch('http://127.0.0.1:8001/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
 
         // After successful login, redirect to the home page
 //        window.location.href = "http://127.0.0.1:8002/home-page";
-          window.location.href = "http://127.0.0.1:8002/selection-page";
+          window.location.href = "http://127.0.0.1:8001/selection-page";
 
 
     } catch (error) {

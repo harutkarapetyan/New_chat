@@ -30,24 +30,26 @@ class ResetPassword(Base):
 class MessageGlobal(Base):
     __tablename__ = "global_message"
 
-    message_id = Column(Integer, nullable=False, primary_key=True)
-    sender_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    message_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
+    sender_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
-    is_read = Column(Boolean, default=False)
-
+    # is_read = Column(Boolean, default=False)
 
     # Relationships
     sender = relationship("User", foreign_keys=[sender_id])
 
-    # receiver_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)  # Group chats might not need receiver
-    # receiver = relationship("User", foreign_keys=[receiver_id])
-    # parent_message = relationship("Message", remote_side=[message_id])
 
+class OneToOneMessage(Base):
+    __tablename__ = "one_to_one_message"
 
+    message_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
+    sender_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
+    receiver_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
+    content = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    # is_read = Column(Boolean, default=False, nullable=False)
 
-    # chat_room_id = Column(Integer, ForeignKey("chat_room.chat_room_id"), nullable=True)
-    # message_type = Column(String, default="text", nullable=False)
-    # attachments = Column(String, nullable=True)
-    # edited = Column(Boolean, default=False)
-    # parent_message_id = Column(Integer, ForeignKey("message.message_id"), nullable=True)
+    # Relationships
+    sender = relationship("User", foreign_keys=[sender_id], backref="sent_messages")
+    receiver = relationship("User", foreign_keys=[receiver_id], backref="received_messages")

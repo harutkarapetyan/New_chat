@@ -1,6 +1,5 @@
 # FastAPI
-from fastapi import FastAPI, status, Request, Depends
-from fastapi.responses import JSONResponse, ORJSONResponse
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -11,9 +10,8 @@ from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/auth/login")
 
 # Database and models
-from sqlalchemy.orm import Session
-from database import engine, check_connection, get_db
-from models.models import Base, User
+from database import engine, check_connection
+from models.models import Base
 
 
 # Routers
@@ -46,11 +44,13 @@ response_headers = {
 }
 
 
+@app.get("/")
+def get_welcome():
+    return "WELCOME"
+
 
 @app.get("/home")
-async def get(request: Request,
-              token = Depends(get_current_user)):
-
+async def get(request: Request,token = Depends(get_current_user)):
     return template.TemplateResponse("index.html", {"request": request})
 
 
@@ -72,6 +72,9 @@ def get_home_page(request: Request):
 def get_selection_page(request: Request):
     return template.TemplateResponse("chat_selection.html", {"request": request})
 
+@app.get("/ws/one-to-one/{user_id}")
+def get_one_to_one_page(request: Request, user_id: int):
+    return template.TemplateResponse("one_to_one_chat.html", {"request": request})
 
 app.include_router(auth_router)
 app.include_router(forgot_router)

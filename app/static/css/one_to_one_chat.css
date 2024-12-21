@@ -1,0 +1,80 @@
+body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        #chat-container {
+            width: 90%;
+            max-width: 600px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #message_to_one {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #message_to_one .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #e1f5fe;
+            display: inline-block;
+        }
+
+        #message_to_one .message.sent {
+            background: #c8e6c9;
+            align-self: flex-end;
+        }
+
+        #input-container_to_one {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #ffffff;
+        }
+
+        #input-container_to_one input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        #input-container_to_one button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            background: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        #input-container_to_one button:hover {
+            background: #0056b3;
+        }
